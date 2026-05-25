@@ -103,5 +103,3 @@ aws ssm send-command \
     docker compose up -d --remove-orphans"]
 ```
 
-> Replace `:9` with the target stable build number as needed.
-
