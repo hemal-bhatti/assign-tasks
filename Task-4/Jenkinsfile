@@ -1,0 +1,82 @@
+pipeline {
+    agent {
+        label 'jenkins-agent' 
+    }
+
+    environment {
+        DOCKER_HUB_USER  = 'hemal45' 
+        IMAGE_NAME       = 'simple-node'
+        IMAGE_TAG        = "${BUILD_NUMBER}"
+        AWS_REGION       = 'ap-south-1'              
+        
+    
+        TARGET_INSTANCE_ID = 'i-061c64da266ecc597'   
+        APP_DIR            = '/var/www/simple-app/simple-backend'      
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Pulling source code from Git Repository...'
+                checkout scm
+            }
+        }
+
+        stage('Fetch Docker Hub Credentials') {
+            steps {
+                echo 'Retrieving Docker Hub credentials securely via IAM Role...'
+                script {     
+                    sh "set +x"
+                    env.DOCKER_USER = 'username' 
+                    env.DOCKER_PASS = 'password' 
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker image: ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
+                sh "docker build -t ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                sh "docker tag ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest"
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                echo 'Logging into Docker Hub and pushing image...'
+                sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin'
+                sh "docker push ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
+                sh "docker push ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest"
+                sh "docker logout"
+            }
+        }
+
+    stage('Deploy via SSM Run Command') {
+    steps {
+        echo "Executing deployment on Target EC2 (${TARGET_INSTANCE_ID}) using AWS SSM..."
+        script {
+            def deployCmd = "cd ${APP_DIR} && sed -i 's|image: ${DOCKER_HUB_USER}/${IMAGE_NAME}:.*|image: ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}|g' docker-compose.yml && docker compose pull && docker compose up -d --remove-orphans"
+
+            sh """
+                ENCODED=\$(echo '${deployCmd}' | base64 -w 0)
+                aws ssm send-command \
+                    --document-name "AWS-RunShellScript" \
+                    --instance-ids "${TARGET_INSTANCE_ID}" \
+                    --region "${AWS_REGION}" \
+                    --parameters commands=["echo \$ENCODED | base64 -d | bash"]
+            """
+        }
+    }
+}
+        }
+
+
+    post {
+        always {
+            echo 'Cleaning up worker node environment...'
+            sh "docker rmi ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} || true"
+            sh "docker rmi ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest || true"
+            cleanWs()
+        }
+    }
+}
