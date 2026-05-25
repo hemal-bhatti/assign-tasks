@@ -11,8 +11,6 @@ module "securityGroup" {
   environment          = var.environment
   vpc_id               = module.vpc.vpc_id
   artifact_bucket_name = module.s3.bucket_name 
-  
-  # CHANGE 1: Pass the VPC CIDR block so the Master can safely secure port 50000
   vpc_cidr             = var.vpc_cidr 
 }
 

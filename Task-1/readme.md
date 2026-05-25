@@ -123,7 +123,7 @@ The backend bucket must already exist before running `terraform init`.
 
 | Variable | Description | Dev Default | Prod Default |
 | --- | --- | --- | --- |
-| `aws_region` | AWS region variable declared for the environment | `us-east-1` | `us-east-1` |
+| `aws_region` | AWS region variable declared for the environment | `ap-south-1` | `ap-south-1` |
 | `environment` | Environment name used in resource names and tags | `dev` | `prod` |
 | `instance_type` | EC2 instance type | `t3.micro` | `t3.medium` |
 | `vpc_cidr` | CIDR block for the VPC | `10.0.0.0/16` | `10.0.0.0/16` |
@@ -152,7 +152,7 @@ The provider is currently configured in both environments to use:
 
 ```hcl
 profile = "aim-dek"
-region  = "ap-south-1"
+region  = var.aws_region
 ```
 
 ## How to Initialize

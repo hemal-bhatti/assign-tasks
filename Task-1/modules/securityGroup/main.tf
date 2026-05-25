@@ -1,5 +1,3 @@
-# modules/security/main.tf
-
 # ==========================================
 # 1. APPLICATION LOAD BALANCER SECURITY GROUP
 # ==========================================
@@ -35,7 +33,7 @@ resource "aws_security_group" "bastion" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # In real-world prod, replace with your specific office/home public IP
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -61,7 +59,7 @@ resource "aws_security_group" "jenkins_master" {
     security_groups = [aws_security_group.alb.id]
   }
 
-  # SSH access to Master from the Bastion host
+
   ingress {
     from_port       = 22
     to_port         = 22
@@ -69,7 +67,7 @@ resource "aws_security_group" "jenkins_master" {
     security_groups = [aws_security_group.bastion.id]
   }
 
-  # Inbound JNLP traffic from agents (Port 50000) securely restricted to the VPC CIDR
+ 
   ingress {
     from_port   = 50000
     to_port     = 50000
@@ -92,7 +90,6 @@ resource "aws_security_group" "jenkins_agent" {
   name        = "${var.environment}-jenkins-agent-sg"
   vpc_id      = var.vpc_id
 
-  # Allow administrative SSH connection only from the Bastion Host
   ingress {
     from_port       = 22
     to_port         = 22

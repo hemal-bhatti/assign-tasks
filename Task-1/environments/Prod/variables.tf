@@ -1,4 +1,4 @@
-# environments/Prod/variables.tf
+
 variable "aws_region" {}
 variable "environment" {}
 variable "instance_type" {}

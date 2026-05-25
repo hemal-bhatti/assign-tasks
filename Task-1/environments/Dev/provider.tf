@@ -10,5 +10,5 @@ terraform {
 # Configure the AWS Provider
 provider "aws" {
   profile = "aim-dek"
-  region = "ap-south-1"
+  region  = var.aws_region
 }

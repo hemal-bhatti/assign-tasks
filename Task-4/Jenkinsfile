@@ -4,14 +4,12 @@ pipeline {
     }
 
     environment {
-        DOCKER_HUB_USER  = 'hemal45' 
-        IMAGE_NAME       = 'simple-node'
-        IMAGE_TAG        = "${BUILD_NUMBER}"
-        AWS_REGION       = 'ap-south-1'              
-        
-    
-        TARGET_INSTANCE_ID = 'i-061c64da266ecc597'   
-        APP_DIR            = '/var/www/simple-app/simple-backend'      
+        DOCKER_HUB_USER    = credentials('dockerhub-username')  
+        IMAGE_NAME         = 'simple-node'
+        IMAGE_TAG          = "${BUILD_NUMBER}"
+        AWS_REGION         = 'ap-south-1'
+        TARGET_INSTANCE_ID = 'i-061c64da266ecc597'
+        APP_DIR            = '/var/www/simple-app/simple-backend'
     }
 
     stages {
@@ -22,16 +20,19 @@ pipeline {
             }
         }
 
-        stage('Fetch Docker Hub Credentials') {
-            steps {
-                echo 'Retrieving Docker Hub credentials securely via IAM Role...'
-                script {     
-                    sh "set +x"
-                    env.DOCKER_USER = 'username' 
-                    env.DOCKER_PASS = 'password' 
-                }
+    stage('Fetch Docker Hub Credentials') {
+        steps {
+            withCredentials([usernamePassword(
+                credentialsId: 'dockerhub-creds',
+                usernameVariable: 'DOCKER_USER',
+                passwordVariable: 'DOCKER_PASS'
+            )]) {
+                sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                '''
             }
         }
+    }
 
         stage('Build Docker Image') {
             steps {
