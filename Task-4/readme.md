@@ -34,7 +34,9 @@ The application is containerized using the `Dockerfile` present in the repositor
 hemal45/simple-node:11     ← versioned (build number)
 hemal45/simple-node:latest ← convenience alias
 ```
-
+```
+Note :- we Can also use Docker images scnning tools trivy scan.
+```
 ---
 
 ### Stage 4 — Push to Docker Hub
