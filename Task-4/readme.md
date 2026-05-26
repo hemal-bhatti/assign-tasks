@@ -106,3 +106,7 @@ aws ssm send-command \
     docker compose up -d --remove-orphans"]
 ```
 
+
+
+To set-up master-slave node in Jenkins:- 
+https://gist.github.com/NotHarshhaa/f5ded6760305c734d562c743f7a53d46
