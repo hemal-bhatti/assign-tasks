@@ -21,7 +21,8 @@ Jenkins pulls the latest source code from the connected Git repository using `ch
 
 ### Stage 2 — Fetch Docker Hub Credentials
 
-Docker Hub credentials (username and password) are retrieved securely at runtime and injected as environment variables. In production, this is designed to pull from **AWS Secrets Manager** using the agent's IAM Role, eliminating hardcoded credentials in the codebase.
+Docker Hub credentials (username and password) are retrieved securely at runtime and injected as environment variables. In production, this is designed to pull from **AWS Secrets Manager** using the agent's IAM Role, eliminating hardcoded credentials in the codebase. 
+(NOTE :- Here we set-up credentials in Jenkins)
 
 ---
 
