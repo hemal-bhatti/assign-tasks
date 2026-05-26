@@ -90,8 +90,6 @@ The infrastructure includes networking, security groups, IAM permissions, EC2 in
 - IAM role and instance profile for Jenkins EC2 instances.
 - IAM policy allowing Jenkins instances to read, write, and list the artifacts S3 bucket.
 
-> Note: The code currently creates an ALB security group, but it does not create an actual Application Load Balancer resource.
-
 ### Compute
 
 - Jenkins master EC2 instance in a public subnet.

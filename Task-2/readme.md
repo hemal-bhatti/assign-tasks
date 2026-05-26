@@ -8,8 +8,7 @@ http://3.108.63.140/
 http://3.108.63.140/api/users
 
 sample nginx file  :-
-
-  GNU nano 6.2                                                                                             simple-backend.conf *                                                                                                     
+                                                                                                 
 server {
     server_name _;
     root /var/www/simple-app/simple-backend;
@@ -39,7 +38,6 @@ server {
 
 
 attach policy to ec2 of CloudWatchAgentServerPolicy 
-
 
 
 install cw agent for logs :-  

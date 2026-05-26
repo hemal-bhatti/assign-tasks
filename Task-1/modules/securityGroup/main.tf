@@ -51,7 +51,6 @@ resource "aws_security_group" "jenkins_master" {
   name        = "${var.environment}-jenkins-master-sg"
   vpc_id      = var.vpc_id
 
-  # Traffic from ALB to Jenkins UI Dashboard
   ingress {
     from_port       = 8080
     to_port         = 8080
@@ -72,7 +71,7 @@ resource "aws_security_group" "jenkins_master" {
     from_port   = 50000
     to_port     = 50000
     protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr] # Secure upgrade: only allowed from internal network
+    cidr_blocks = [var.vpc_cidr] 
   }
 
   egress {
@@ -94,7 +93,7 @@ resource "aws_security_group" "jenkins_agent" {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = [aws_security_group.bastion.id] # Fixed & isolated!
+    security_groups = [aws_security_group.bastion.id] 
   }
 
   egress {
